@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Tapat",
+  "version": "1.0.0",
+  "description": "Exam monitor for Google Forms quizzes: blocks a listed set of AI and document sites and logs leaving the exam.",
+  "permissions": ["declarativeNetRequest", "webNavigation", "tabs", "storage", "alarms"],
+  "host_permissions": ["https://docs.google.com/*", "http://localhost:8000/*", "<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "Tapat" },
+  "web_accessible_resources": [{ "resources": ["blocked.html"], "matches": ["<all_urls>"] }]
+}
