@@ -58,6 +58,7 @@ td:first-child {{ width: 32%; }}
 .readme h2::before {{ content: counter(h2) ". "; }}
 figure {{ break-inside: avoid; margin: 8px 0 14px; text-align: center; }}
 figure img {{ max-width: 100%; max-height: 85mm; border: 0.6pt solid #cfd3da; }}
+.f-13_delete_confirm img {{ max-width: 72%; }}
 figure.diagram svg {{ width: 100%; max-width: 135mm; }}
 .keep {{ break-inside: avoid; page-break-inside: avoid; }}
 h1, h2 {{ break-after: avoid; page-break-after: avoid; }}
@@ -65,8 +66,8 @@ h1, h2 {{ break-after: avoid; page-break-after: avoid; }}
 .grid.g2 {{ grid-template-columns: 1fr 1fr; }} .grid.g3 {{ grid-template-columns: 1fr 1fr 1fr; }}
 .grid figure {{ margin: 0; }}
 .grid figure img {{ width: 100%; max-height: none; height: auto; }}
-.grid.g3 figure img {{ height: 70mm; width: auto; max-width: 100%; object-fit: contain; }}
-.grid.g2 figure img {{ height: 58mm; width: 100%; object-fit: contain; object-position: top; background: #fff; }}
+.grid.g3 figure img {{ height: 72mm; width: auto; max-width: 100%; object-fit: contain; }}
+.grid.g2 figure img {{ height: auto; max-height: 58mm; width: 100%; object-fit: contain; object-position: top; background: #fff; }}
 figcaption {{ text-align: left; }}
 .pair {{ display: flex; gap: 6mm; align-items: stretch; break-inside: avoid; }}
 .pair figure {{ flex: 1; margin: 4px 0 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }}
@@ -93,7 +94,7 @@ def manual_html():
         name = m.group(1)
         counter[0] += 1
         cap = html.escape(captions[name])
-        return (f'<figure><img src="{img(name)}"><figcaption>Figure {counter[0]}. {cap}'
+        return (f'<figure class="f-{name.split('.')[0]}"><img src="{img(name)}"><figcaption>Figure {counter[0]}. {cap}'
                 f'</figcaption></figure>')
 
     def diagram(_):

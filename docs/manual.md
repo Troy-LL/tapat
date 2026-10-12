@@ -75,7 +75,9 @@ All of these steps happen on the admin page at <https://tapat-xrg5.onrender.com/
 
 6. After the quiz, download the Form responses as CSV and click Import responses. Students who answered the Form without Tapat get a No session status.
 
-@@GRID:11_import_result.png,12_no_session_rows.png@@
+@@FIG:11_import_result.png@@
+
+@@FIG:12_no_session_rows.png@@
 
 </div>
 
