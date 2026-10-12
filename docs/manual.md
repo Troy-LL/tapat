@@ -4,7 +4,9 @@ Tapat is a Chrome extension and a small web server for Google Forms quizzes. The
 
 Tapat does not decide who cheated. It gives the professor a record to check.
 
-The code is at https://github.com/Troy-LL/tapat and the live admin page is at https://tapat-xrg5.onrender.com/admin.
+Code: <https://github.com/Troy-LL/tapat>
+
+Live admin page: <https://tapat-xrg5.onrender.com/admin>
 
 # Features
 

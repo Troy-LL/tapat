@@ -214,6 +214,21 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 });
 chrome.tabs.onCreated.addListener(() => enqueue("tab_switch", "new tab"));
 
+// Closing the exam tab without submitting ends the session, so the block list
+// does not stay on after the quiz. It is logged so the professor can see it.
+chrome.tabs.onRemoved.addListener(async (tabId) => {
+  const s = await getSession();
+  const { examTabId = null } = await store.get("examTabId");
+  if (!s || !s.active || tabId !== examTabId) return;
+  await enqueue("tab_switch", "closed the exam tab before submitting");
+  await locked(async () => {
+    const cur = await getSession();
+    if (cur) await store.set({ session: { ...cur, active: false } });
+  });
+  chrome.alarms.clear("heartbeat");
+  await disableBlocking();
+});
+
 // The embedded Form frame lands on .../formResponse after submit.
 chrome.webNavigation.onCompleted.addListener(async (d) => {
   const s = await getSession();

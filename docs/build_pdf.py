@@ -32,7 +32,7 @@ CSS = f"""
 @page {{ size: A4; margin: 22mm 22mm 24mm 22mm; }}
 body {{ font-family: 'Inter','Helvetica Neue',Arial,sans-serif; font-size: 10.5pt; line-height: 1.55; color: #1a1a1a; }}
 h1, h2, h3 {{ color: #1a1a1a; break-after: avoid; font-weight: 700; }}
-a {{ color: {ACCENT}; text-decoration: none; }}
+a {{ color: {ACCENT}; text-decoration: none; white-space: nowrap; }}
 code {{ font-family: 'DejaVu Sans Mono',Consolas,monospace; font-size: 9pt; }}
 p {{ margin: 0 0 8px; }}
 ol {{ margin: 0 0 10px; padding-left: 20px; }} li {{ margin-bottom: 3px; }}
@@ -119,7 +119,7 @@ def build():
 <p class="one">A Chrome extension and web server for monitoring Google Forms quizzes</p>
 <div class="meta"><b>INTE301 Systems Integration &amp; Architecture · Project 1</b><br>
 Sir Rodel Villareaz<br>Troy Lazaro<br>{today}<br>
-<span class="url">github.com/Troy-LL/tapat</span></div>
+<a class="url" href="https://github.com/Troy-LL/tapat">github.com/Troy-LL/tapat</a></div>
 <img src="{img('09_admin_quiz.png')}"></section>
 <section class="readme">{body}</section>
 {appendix}

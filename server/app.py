@@ -8,7 +8,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from html import escape
 
-from fastapi import Cookie, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
+from fastapi import Cookie, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
