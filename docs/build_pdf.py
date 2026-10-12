@@ -17,16 +17,20 @@ OUT = ROOT / "docs" / "Tapat_INTE301_Project1_Lazaro.pdf"
 SHOTS = ROOT / "docs" / "screenshots"
 ACCENT = "#1F3A8A"
 FIGURES = [
-    ("09_admin_quiz.png", "The admin page for one quiz."),
-    ("08_admin_login.png", "Professor log in. The password is set only in the server's environment."),
-    ("10_admin_home.png", "Admin home: create a quiz from a Google Form link, and the list of quizzes."),
-    ("02_popup.png", "The extension popup."),
-    ("02b_popup_waking.png", "Popup while the free server wakes up. It waits and opens the exam once the server answers."),
-    ("03_consent.png", "Consent screen shown before the quiz starts."),
-    ("04_exam.png", "Exam page with a sample quiz embedded in place of a real Google Form."),
-    ("05_blocked_card.png", "The block page."),
-    ("02c_popup_offline.png", "Popup while the server can't be reached: events are kept in the browser and sent in order later."),
-    ("06_submitted.png", "Sample quiz submitted: Tapat detects the formResponse page and closes the session."),
+    ("08_admin_login.png", "Admin login. Only someone with the admin password can open the admin page."),
+    ("10_admin_home.png", "Admin home. A new quiz needs a title and the Google Form link. Existing quizzes are listed below."),
+    ("14_start_link.png", "Start link. This is the link the class pastes into the extension. It only works for this quiz."),
+    ("15_students_timeline.png", "Students table. Each row is one student. The open row shows the timeline, including a blocked ChatGPT visit."),
+    ("11_import_result.png", "Import responses. The page confirms how many rows were read from the CSV."),
+    ("12_no_session_rows.png", "No session rows. These students are in the Form responses but never started Tapat."),
+    ("13_delete_confirm.png", "Delete logs and Delete quiz. A button turns red and clickable only after DELETE is typed."),
+    ("02_popup.png", "Popup, ready. The student pastes the start link and enters their email."),
+    ("02b_popup_waking.png", "Popup, server waking up. It waits and opens the exam when the server answers."),
+    ("02c_popup_offline.png", "Popup, offline. Events are kept in the browser until the connection is back."),
+    ("03_consent.png", "Consent screen. It says what is recorded before the quiz starts."),
+    ("04_exam.png", "Exam page. The Google Form opens inside Tapat. This screenshot uses a sample quiz."),
+    ("05_blocked.png", "Block page. Opening a listed site during the quiz shows this page, and the attempt is recorded."),
+    ("06_submitted.png", "Submitted. Tapat sees the Form's confirmation page and ends the session."),
 ]
 CSS = f"""
 @page {{ size: A4; margin: 22mm 22mm 24mm 22mm; }}
@@ -53,8 +57,17 @@ td:first-child {{ width: 32%; }}
 .readme h2:first-child {{ margin-top: 0; }}
 .readme h2::before {{ content: counter(h2) ". "; }}
 figure {{ break-inside: avoid; margin: 8px 0 14px; text-align: center; }}
-figure img {{ max-width: 100%; max-height: 82mm; border: 0.6pt solid #cfd3da; }}
+figure img {{ max-width: 100%; max-height: 85mm; border: 0.6pt solid #cfd3da; }}
 figure.diagram svg {{ width: 100%; max-width: 135mm; }}
+.keep {{ break-inside: avoid; page-break-inside: avoid; }}
+h1, h2 {{ break-after: avoid; page-break-after: avoid; }}
+.grid {{ display: grid; gap: 5mm; margin: 6px 0 12px; break-inside: avoid; align-items: start; }}
+.grid.g2 {{ grid-template-columns: 1fr 1fr; }} .grid.g3 {{ grid-template-columns: 1fr 1fr 1fr; }}
+.grid figure {{ margin: 0; }}
+.grid figure img {{ width: 100%; max-height: none; height: auto; }}
+.grid.g3 figure img {{ height: 70mm; width: auto; max-width: 100%; object-fit: contain; }}
+.grid.g2 figure img {{ height: 58mm; width: 100%; object-fit: contain; object-position: top; background: #fff; }}
+figcaption {{ text-align: left; }}
 .pair {{ display: flex; gap: 6mm; align-items: stretch; break-inside: avoid; }}
 .pair figure {{ flex: 1; margin: 4px 0 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }}
 .pair figure img {{ max-height: 62mm; }}
@@ -72,7 +85,7 @@ def img(name, folder=SHOTS):
 def manual_html():
     """docs/manual.md -> numbered sections, each starting on a new page, with numbered figures."""
     md = (ROOT / "docs" / "manual.md").read_text()
-    body = markdown.markdown(md, extensions=["tables", "fenced_code"])
+    body = markdown.markdown(md, extensions=["tables", "fenced_code", "md_in_html", "sane_lists"])
     captions = dict(FIGURES)
     counter = [0]
 
@@ -94,15 +107,23 @@ def manual_html():
         b = figure(re.match(r"(.*)", m.group(2)))
         return f'<div class="pair">{a}{b}</div>'
 
+    def grid(names, cols):
+        figs = "".join(figure(re.match(r"(.*)", n)) for n in names.split(","))
+        return f'<div class="grid g{cols}">{figs}</div>'
+
     def any_marker(m):
         if m.group(1) == "DIAGRAM":
             return diagram(m)
+        if m.group(1).startswith("GRID3:"):
+            return grid(m.group(1)[6:], 3)
+        if m.group(1).startswith("GRID:"):
+            return grid(m.group(1)[5:], 2)
         if m.group(1).startswith("PAIR:"):
             return pair(re.match(r"PAIR:([\w.]+):([\w.]+)", m.group(1)))
         return figure(re.match(r"FIG:([\w.]+)", m.group(1)))
 
     # One pass in document order so figures are numbered 1, 2, 3...
-    body = re.sub(r"<p>@@(DIAGRAM|PAIR:[\w.:]+|FIG:[\w.]+)@@</p>", any_marker, body)
+    body = re.sub(r"<p>@@(DIAGRAM|GRID3?:[\w.,]+|PAIR:[\w.:]+|FIG:[\w.]+)@@</p>", any_marker, body)
     body = re.sub(r"@@CHIP:(\w+):([^@]+)@@", r'<span class="chip \1">\2</span>', body)
     body = re.sub(r"<h1>(.*?)</h1>", r'<h2 class="sec">\1</h2>', body)
     sections = re.findall(r'<h2 class="sec">(.*?)</h2>', body)
