@@ -397,7 +397,11 @@ def admin_quiz(code: str, request: Request, imported: int | None = None, deleted
 <section><h2>Delete logs</h2><form method=post action="/admin/quiz/{code}/delete" class=row>
 <input type=text name=confirm placeholder="Type DELETE" autocomplete=off oninput="this.form.querySelector('button').disabled=this.value!=='DELETE'">
 <button class=danger disabled>Delete logs</button></form>
-<p class=muted>Removes every event, session and imported response for this quiz. Do this after grading.</p></section>"""
+<p class=muted>Removes every event, session and imported response for this quiz. Do this after grading.</p></section>
+<section><h2>Delete quiz</h2><form method=post action="/admin/quiz/{code}/delete-quiz" class=row>
+<input type=text name=confirm placeholder="Type DELETE" autocomplete=off oninput="this.form.querySelector('button').disabled=this.value!=='DELETE'">
+<button class=danger disabled>Delete quiz</button></form>
+<p class=muted>Removes this quiz, its start link and all of its logs. Students can no longer start it.</p></section>"""
     return page(quiz["title"], body, nav=ADMIN_NAV)
 
 
@@ -415,3 +419,15 @@ def admin_delete(code: str, confirm: str = Form(""), tapat_admin: str | None = C
         raise HTTPException(400, "Type DELETE to confirm")
     delete_logs(code.upper())
     return RedirectResponse(f"/admin/quiz/{code.upper()}?deleted=1", status_code=303)
+
+
+@app.post("/admin/quiz/{code}/delete-quiz")
+def admin_delete_quiz(code: str, confirm: str = Form(""), tapat_admin: str | None = Cookie(None)):
+    require_admin(tapat_admin)
+    if confirm != "DELETE":
+        raise HTTPException(400, "Type DELETE to confirm")
+    code = code.upper()
+    delete_logs(code)
+    with db.connect() as c:
+        c.execute("DELETE FROM quizzes WHERE code=?", (code,))
+    return RedirectResponse("/admin", status_code=303)

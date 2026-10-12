@@ -25,7 +25,7 @@ Online quizzes on Google Forms are easy to take with a second tab open. A studen
 - **Offline queue.** Every event is saved in the browser first, with its own time and a sequence number, and sent in order once the student is back online or the server wakes up. Resends are ignored by the server, so nothing is counted twice.
 - **Heartbeat.** The extension checks in every 10 seconds. A gap over 25 seconds shows **Monitor silent**. If the gap was filled later by queued events, it shows **Offline gap, synced later** instead.
 - **No session.** For students who submitted the Form without Tapat running, found by importing the Form's responses CSV.
-- **Admin page.** Password login, one page per quiz with the start link, a row per student, Import responses, and Delete logs.
+- **Admin page.** Password login, one page per quiz with the start link, a row per student, Import responses, Delete logs and Delete quiz.
 
 ## Architecture
 
@@ -90,6 +90,7 @@ Tapat is live at https://tapat-xrg5.onrender.com (admin page: https://tapat-xrg5
 5. During the quiz, watch the Students table. Click a row to see that student's timeline.
 6. After the quiz, download the Form's responses as CSV and upload it under Import responses with **Import responses**. Students who submitted without Tapat show as **No session**.
 7. After grading, type `DELETE` and click **Delete logs**.
+8. To remove a quiz entirely, type `DELETE` under Delete quiz and click **Delete quiz**. This removes the quiz, its start link and all of its logs.
 
 Status chips: **OK** (gray), **Offline gap, synced later** (gray-amber), **Monitor silent** (amber), **No session** (red). Blocked sites, apps opened and leaving the exam are listed under Notes.
 

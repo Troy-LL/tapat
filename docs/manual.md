@@ -20,6 +20,7 @@ Live server: **https://tapat-xrg5.onrender.com**. Admin page: **https://tapat-xr
 | Waking state | The free server sleeps when idle. The popup shows "Server waking up…" and waits instead of failing. |
 | No session (CSV) | After the quiz, the professor uploads the Form's responses CSV. Anyone who submitted the Form without Tapat running is marked No session. |
 | Delete logs | One button removes every log for a quiz after grading. |
+| Delete quiz | Removes a quiz, its start link and all of its logs. |
 | Desktop watcher | An optional small program that logs when Word, Notes, Preview or Acrobat comes to the front. It records app names only, never window titles. |
 
 # How it works
@@ -74,6 +75,7 @@ Tapat has three parts.
 7. In Google Forms, open **Responses**, click the three dots, and download the responses as CSV.
 8. Under Import responses, choose the file and click **Import responses**. Anyone who submitted without Tapat appears with a red **No session** chip.
 9. After grading, type `DELETE` in the box under Delete logs and click **Delete logs**. This removes every event, session and imported response for that quiz.
+10. To remove the quiz itself, type `DELETE` in the box under Delete quiz and click **Delete quiz**. This also removes its start link and all of its logs, and students can no longer start it.
 
 @@FIG:09_admin_quiz.png@@
 

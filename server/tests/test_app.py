@@ -183,3 +183,25 @@ def test_offline_gap_synced_later_is_not_monitor_silent():
     row = [r for r in tapat.summarize(QUIZ) if r["email"] == "offline@x.edu"][0]
     assert "Offline gap, synced later" in row["flags"]
     assert "Monitor silent" not in row["flags"]
+
+
+def test_delete_quiz_removes_everything():
+    auth._fails.clear()
+    a = TestClient(tapat.app)
+    login(a)
+    code = tapat.create_quiz("Doomed", "https://docs.google.com/forms/d/e/z/viewform")
+    tok = tapat.get_quiz(code)["token"]
+    s = c.post("/api/start", json={"code": code, "token": tok, "email": "d@x.edu"}).json()
+    ev(s, "heartbeat")
+    a.post(f"/admin/quiz/{code}/import", files={"file": ("r.csv", "Email Address\nz@x.edu\n", "text/csv")})
+    assert a.post(f"/admin/quiz/{code}/delete-quiz", data={"confirm": "nope"}).status_code == 400
+    assert TestClient(tapat.app).post(f"/admin/quiz/{code}/delete-quiz", data={"confirm": "DELETE"},
+                                      follow_redirects=False).headers["location"] == "/admin/login"
+    r = a.post(f"/admin/quiz/{code}/delete-quiz", data={"confirm": "DELETE"}, follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/admin"
+    assert tapat.get_quiz(code) is None
+    with tapat.db.connect() as conn:
+        for table in ("events", "sessions", "responses"):
+            assert conn.execute(f"SELECT COUNT(*) AS n FROM {table} WHERE quiz=?", (code,)).fetchone()["n"] == 0
+    assert c.post("/api/start", json={"code": code, "token": tok, "email": "d@x.edu"}).status_code == 403
+    assert "Doomed" not in a.get("/admin").text
