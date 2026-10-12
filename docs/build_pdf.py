@@ -21,7 +21,7 @@ OUT = ROOT / "docs" / "Tapat_INTE301_Project1_Lazaro.pdf"
 SHOTS = ROOT / "docs" / "screenshots"
 ACCENT = "#1F3A8A"
 FIGURES = [
-    ("09_admin_quiz.png", "Admin quiz page: start link (after Copy start link), one row per student with status chips, two timelines open, and Delete logs armed by typing DELETE. Seed data."),
+    ("09_admin_quiz.png", "Admin quiz page on the live server: start link after Copy start link, a student with a blocked site and their timeline open, and a No session row after Import responses."),
     ("08_admin_login.png", "Professor log in. The password is set only in the server's environment."),
     ("10_admin_home.png", "Admin home: create a quiz from a Google Form link, and the list of quizzes."),
     ("02_popup.png", "Extension popup: the student pastes the start link and enters their school email."),
