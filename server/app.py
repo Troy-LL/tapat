@@ -137,7 +137,7 @@ def summarize(now: float | None = None):
 
 
 def fmt(ts):
-    return datetime.fromtimestamp(ts).strftime("%H:%M:%S") if ts else "—"
+    return datetime.fromtimestamp(ts).strftime("%H:%M:%S") if ts else "-"
 
 
 CSS = """
@@ -184,7 +184,7 @@ def dashboard(flag: str = Query("all"), q: str = Query(""), imported: int | None
         c = r["counts"]
         flags = "".join(f'<span class="flag {escape(f.split()[0])}">{escape(f)}</span>' for f in r["flags"]) or '<span class="clean">Clean</span>'
         tl = "".join(f"<li>{fmt(t)} · <b>{escape(k)}</b> {escape(d)}</li>" for t, k, d in r["timeline"])
-        tl_html = f"<details><summary>{len(r['timeline'])} events</summary><ol class='tl'>{tl}</ol></details>" if tl else "—"
+        tl_html = f"<details><summary>{len(r['timeline'])} events</summary><ol class='tl'>{tl}</ol></details>" if tl else "-"
         body.append(
             f"<tr><td>{escape(r['email'])}</td><td>{fmt(r['first'])}</td><td>{c['tab_switch']}</td><td>{c['focus_lost']}</td>"
             f"<td>{c['blocked_url']}</td><td>{c['app_opened']}</td><td>{'Yes' if r['submitted'] else 'No'}</td>"

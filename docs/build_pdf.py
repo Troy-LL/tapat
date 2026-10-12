@@ -24,10 +24,10 @@ FIGURES = [
     ("01_dashboard.png", "Teacher dashboard with seed data: a clean student, a flagged student with an open timeline, and a No session row."),
     ("02_popup.png", "Extension popup where the student enters their email and the Form link."),
     ("03_consent.png", "Consent screen shown before the quiz starts."),
-    ("04_exam.png", "Exam page with the Google Form embedded (sample quiz)."),
+    ("04_exam.png", "Exam page with a sample quiz embedded in place of a real Google Form."),
     ("05_blocked.png", "Block page shown when chatgpt.com is opened during the quiz; the attempt is logged."),
-    ("06_submitted.png", "Form submitted; Tapat detects formResponse and closes the session."),
-    ("07_no_session.png", "Submitted in incognito without Tapat; flagged after CSV import."),
+    ("06_submitted.png", "Sample quiz submitted: Tapat detects the formResponse page and closes the session."),
+    ("07_no_session.png", "Submitted in incognito without Tapat, flagged after CSV import."),
 ]
 PARTS = [
     ("Teacher server", ["server/app.py", "server/seed.py", "server/run.sh", "server/requirements.txt",
@@ -57,7 +57,8 @@ th {{ background: #eef2fb; color: {ACCENT}; }}
 .cover h1 {{ font-size: 44pt; margin: 0; }}
 .cover .one {{ font-size: 14pt; color: #333; margin: 6px 0 22px; }}
 .cover .meta {{ font-size: 11pt; line-height: 1.8; }}
-.cover img {{ width: 100%; border: 1px solid #ccd; margin-top: 18px; }}
+.cover img.logo {{ width: 95mm; border: 0; margin: 0 0 6px; }}
+.cover img:not(.logo) {{ width: 100%; border: 1px solid #ccd; margin-top: 18px; }}
 .toc ol {{ font-size: 12pt; line-height: 2; }}
 .readme {{ counter-reset: h2; }}
 .readme h1 {{ display: none; }}
@@ -80,8 +81,8 @@ figcaption {{ font-size: 9.5pt; color: #333; margin-top: 4px; }}
 """
 
 
-def img(name):
-    return "data:image/png;base64," + base64.b64encode((SHOTS / name).read_bytes()).decode()
+def img(name, folder=SHOTS):
+    return "data:image/png;base64," + base64.b64encode((folder / name).read_bytes()).decode()
 
 
 def readme_html():
@@ -122,8 +123,8 @@ def build():
     )
     doc = f"""<!doctype html><html><head><meta charset="utf-8"><title>Tapat</title>
 <meta name="author" content="Troy Lazaro"><style>{CSS}</style></head><body>
-<section class="cover"><h1>Tapat</h1>
-<p class="one">An exam monitor for Google Forms quizzes that blocks a listed set of AI and document sites and logs when students leave the exam.</p>
+<section class="cover"><img class="logo" src="{img('logo.png', ROOT / 'logo')}" alt="Tapat">
+<p class="one">An exam monitor for Google Forms quizzes that blocks a listed set of sites and logs when students leave the exam.</p>
 <div class="meta"><b>INTE301 Systems Integration &amp; Architecture · Project 1</b><br>
 Sir Rodel Villareaz<br>Troy Lazaro<br>{today}</div>
 <img src="{img('01_dashboard.png')}"></section>

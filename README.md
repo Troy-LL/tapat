@@ -1,12 +1,14 @@
+<p align="center"><img src="logo/logo.png" alt="Tapat" width="330"></p>
+
 # Tapat
 
-**Tapat** is an exam monitor for Google Forms quizzes. It blocks a listed set of AI and document sites while the quiz is open, logs when a student leaves the exam, and gives the teacher one dashboard to review every student afterward.
+**Tapat** is an exam monitor for Google Forms quizzes. It blocks a listed set of sites while the quiz is open, logs when a student leaves the exam, and gives the teacher one dashboard to review every student afterward.
 
 *Tapat* is Filipino for "honest."
 
 ## Overview
 
-A student opens the quiz through the Tapat Chrome extension. The extension shows a consent screen, embeds the Google Form, blocks a listed set of AI and document sites, and logs tab switches and Chrome losing focus. An optional desktop watcher logs when Word, Notes, Preview or Acrobat comes to the front. Every event goes to a small teacher server, which shows one row per student on a dashboard. After the quiz, the teacher imports the Form's responses CSV, and anyone who submitted without Tapat running gets a **No session** flag.
+A student opens the quiz through the Tapat Chrome extension. The extension shows a consent screen, embeds the Google Form, blocks a listed set of sites, and logs tab switches and Chrome losing focus. An optional desktop watcher logs when Word, Notes, Preview or Acrobat comes to the front. Every event goes to a small teacher server, which shows one row per student on a dashboard. After the quiz, the teacher imports the Form's responses CSV, and anyone who submitted without Tapat running gets a **No session** flag.
 
 ## The problem
 
@@ -15,7 +17,7 @@ Online quizzes on Google Forms are easy to take with a second tab open. A studen
 ## Features
 
 - **Consent first.** Before the quiz starts, the student sees: *"This logs tab switches and apps opened, nothing else."*
-- **Site blocking.** Blocks a listed set of AI and document sites during the quiz: ChatGPT, Gemini, Claude, Word Online / office.com, Google Docs and any `.pdf` link. Blocked attempts are logged.
+- **Site blocking.** Blocks a listed set of sites during the quiz: ChatGPT, Gemini, Claude, Word Online / office.com, Google Docs and any `.pdf` link. Blocked attempts are logged.
 - **Leaving the exam.** Logs tab switches, new tabs and Chrome losing focus.
 - **Desktop apps.** The watcher logs app names only, never window titles, and exits on its own when the Form is submitted.
 - **Submit detection.** The session closes when the embedded Form reaches its `formResponse` page.
@@ -84,7 +86,7 @@ Run the tests with `cd server && python -m pytest tests`.
 | ![Dashboard](docs/screenshots/01_dashboard.png) | ![Consent](docs/screenshots/03_consent.png) |
 | Teacher dashboard | Consent screen |
 | ![Exam](docs/screenshots/04_exam.png) | ![Blocked](docs/screenshots/05_blocked.png) |
-| Exam page with the embedded Form | Block page for chatgpt.com |
+| Exam page with the embedded Form (sample quiz) | Block page for chatgpt.com |
 
 The full set is in [`docs/screenshots`](docs/screenshots), and the documentation PDF is [`docs/Tapat_INTE301_Project1_Lazaro.pdf`](docs/Tapat_INTE301_Project1_Lazaro.pdf).
 
@@ -92,7 +94,7 @@ The full set is in [`docs/screenshots`](docs/screenshots), and the documentation
 
 - It blocks a list, not all AI. A site that isn't on the list stays open, and a second device can't be seen at all.
 - The watcher only runs if the student starts it, and it exits on submit.
-- Students who decline the consent screen should be given an alternative, such as a supervised paper quiz.
+- Students who decline take the quiz on paper or in a proctored room.
 - A flag is a reason to ask, not proof of cheating. The teacher decides.
 - Logs are deleted after grading. Tapat stores emails and event types only, never page contents, keystrokes or window titles.
 
