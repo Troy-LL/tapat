@@ -1,7 +1,7 @@
 // Shared settings for the Tapat extension.
 // Default hosted server. Change it after deploying (see docs/deploy.md);
 // a start link from any server also works, since it carries its own address.
-const DEFAULT_SERVER = "https://tapat.onrender.com";
+const DEFAULT_SERVER = "https://tapat-xrg5.onrender.com";
 const HEARTBEAT_SECONDS = 10;
 
 // Sites blocked while an exam session is active. These are RE2 regexes on the

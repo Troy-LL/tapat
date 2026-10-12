@@ -30,8 +30,8 @@ test("unlisted sites stay open", () => {
 });
 
 test("start links parse", () => {
-  assert.deepStrictEqual(parseStartLink("https://tapat.onrender.com/q/q7k2pm?t=abc"),
-    { server: "https://tapat.onrender.com", code: "Q7K2PM", token: "abc" });
-  assert.strictEqual(parseStartLink("https://tapat.onrender.com/q/Q7K2PM"), null);
+  assert.deepStrictEqual(parseStartLink("https://tapat-xrg5.onrender.com/q/q7k2pm?t=abc"),
+    { server: "https://tapat-xrg5.onrender.com", code: "Q7K2PM", token: "abc" });
+  assert.strictEqual(parseStartLink("https://tapat-xrg5.onrender.com/q/Q7K2PM"), null);
   assert.strictEqual(parseStartLink("not a link"), null);
 });

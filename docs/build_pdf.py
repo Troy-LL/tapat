@@ -66,6 +66,12 @@ th {{ background: #eef2fb; color: {ACCENT}; }}
 .toc ol {{ font-size: 12pt; line-height: 2; }}
 .readme {{ counter-reset: h2; }}
 .readme h1 {{ display: none; }}
+.readme h2.sec {{ break-before: page; }}
+.cover .kind {{ font-size: 13pt; letter-spacing: .2em; text-transform: uppercase; color: {ACCENT}; margin: 4px 0 0; }}
+.cover .url {{ color: {ACCENT}; font-weight: 600; }}
+.toc .apx {{ font-size: 12pt; line-height: 2; margin: 6px 0 0 0; }}
+.toc ol.src {{ font-size: 11pt; line-height: 1.8; margin-left: 2em; list-style: none; }}
+.appendix h3 {{ color: {ACCENT}; }}
 .readme h2 {{ counter-increment: h2; border-bottom: 2px solid {ACCENT}; padding-bottom: 2px; }}
 .readme h2::before {{ content: counter(h2) ". "; }}
 figure {{ break-inside: avoid; margin: 0 0 14px; text-align: center; }}
@@ -89,21 +95,28 @@ def img(name, folder=SHOTS):
     return "data:image/png;base64," + base64.b64encode((folder / name).read_bytes()).decode()
 
 
-def readme_html():
-    md = (ROOT / "README.md").read_text()
-    md = re.sub(r'^<p align="center">.*?</p>\n', "", md, flags=re.S)  # logo is on the cover
-    md = re.sub(r"## Screenshots\n.*?(?=\n## )", "## Screenshots\n\n@@FIGURES@@\n", md, flags=re.S)
+def manual_html():
+    """docs/manual.md -> numbered sections, each starting on a new page, with numbered figures."""
+    md = (ROOT / "docs" / "manual.md").read_text()
     body = markdown.markdown(md, extensions=["tables", "fenced_code"])
-    figs = "".join(
-        f'<figure><img src="{img(f)}"><figcaption><b>Figure {i}.</b> {html.escape(c)}</figcaption></figure>'
-        for i, (f, c) in enumerate(FIGURES, 1)
-    )
-    body = body.replace("<p>@@FIGURES@@</p>", figs)
+    captions = dict(FIGURES)
+    counter = [0]
+
+    def figure(m):
+        name = m.group(1)
+        counter[0] += 1
+        cap = html.escape(captions[name])
+        return (f'<figure><img src="{img(name)}"><figcaption><b>Figure {counter[0]}.</b> {cap}'
+                f'</figcaption></figure>')
+
+    body = re.sub(r"<p>@@FIG:([\w.]+)@@</p>", figure, body)
+    body = re.sub(r"<h1>(.*?)</h1>", r'<h2 class="sec">\1</h2>', body)
+    sections = re.findall(r'<h2 class="sec">(.*?)</h2>', body)
     deploy = (ROOT / "docs" / "deploy.md").read_text()
     deploy = re.sub(r"^# .*\n", "", deploy).replace("\n## ", "\n### ")
-    body += "<h2>Deployment guide</h2>" + markdown.markdown(deploy, extensions=["tables", "fenced_code"])
-    sections = re.findall(r"<h2>(.*?)</h2>", body)
-    return body, sections
+    appendix = ('<div class="page appendix"><h2>Appendix A. Deployment</h2>'
+                + markdown.markdown(deploy, extensions=["tables", "fenced_code"]) + "</div>")
+    return body, sections, appendix
 
 
 def listing(path):
@@ -120,24 +133,28 @@ def listing(path):
 
 
 def build():
-    body, sections = readme_html()
+    body, sections, appendix = manual_html()
     today = datetime.date.today().strftime("%B %d, %Y").replace(" 0", " ")
     toc = "".join(f"<li>{s}</li>" for s in sections)
-    toc += "<li>Code listings<ol type=a>" + "".join(f"<li>{t}</li>" for t, _ in PARTS) + "</ol></li>"
+    toc += ('</ol><p class="apx">Appendix A. Deployment<br>Appendix B. Source code</p><ol class=src>'
+            + "".join(f"<li>B{i + 1}. {t}</li>" for i, (t, _) in enumerate(PARTS)))
     parts = "".join(
-        f'<div class="page part"><h2>Code listing: {t}</h2><p>{len(files)} files.</p></div>'
+        f'<div class="page part"><h2>Appendix B{i + 1}. Source code: {t}</h2><p>{len(files)} files.</p></div>'
         + "".join(listing(f) for f in files)
-        for t, files in PARTS
+        for i, (t, files) in enumerate(PARTS)
     )
     doc = f"""<!doctype html><html><head><meta charset="utf-8"><title>Tapat</title>
 <meta name="author" content="Troy Lazaro"><style>{CSS}</style></head><body>
 <section class="cover"><img class="logo" src="{img('logo.png', ROOT / 'logo')}" alt="Tapat">
+<p class="kind">User manual</p>
 <p class="one">An exam monitor for Google Forms quizzes that blocks a listed set of sites and logs when students leave the exam.</p>
 <div class="meta"><b>INTE301 Systems Integration &amp; Architecture · Project 1</b><br>
-Sir Rodel Villareaz<br>Troy Lazaro<br>{today}</div>
+Sir Rodel Villareaz<br>Troy Lazaro<br>{today}<br>
+<span class="url">https://tapat-xrg5.onrender.com</span></div>
 <img src="{img('09_admin_quiz.png')}"></section>
 <section class="page toc"><h1>Contents</h1><ol>{toc}</ol></section>
-<section class="page readme">{body}</section>
+<section class="readme">{body}</section>
+{appendix}
 {parts}
 </body></html>"""
     (ROOT / "docs" / "build").mkdir(exist_ok=True)

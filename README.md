@@ -72,19 +72,19 @@ Tests: `cd server && python -m pytest tests` and `node --test extension/tests`.
 
 ## Deploy
 
-Tapat runs free on Render with a free Postgres database on Neon. Render's free disk is wiped on every restart, so the data lives in Neon. The click-by-click steps are in [`docs/deploy.md`](docs/deploy.md). In short:
+Tapat is live at https://tapat-xrg5.onrender.com (admin page: https://tapat-xrg5.onrender.com/admin). It runs free on Render with a free Postgres database on Neon. Render's free disk is wiped on every restart, so the data lives in Neon. The click-by-click steps are in [`docs/deploy.md`](docs/deploy.md). In short:
 
 1. Create a Neon project and copy its connection string.
 2. In Render, create a **Blueprint** from this repo. It reads `render.yaml`.
 3. Fill in `DATABASE_URL` (from Neon) and `ADMIN_PASSWORD` when Render asks. The password lives only in Render, never in the repo.
-4. If the service name differs from `tapat`, put the new address in `extension/config.js` and `extension/manifest.json`.
+4. The extension already points at `https://tapat-xrg5.onrender.com`. If the service is ever recreated at a new address, update `extension/config.js` and `extension/manifest.json`.
 
 ## Usage
 
 ### Professor guide
 
 1. In the Google Form, turn on **Collect email addresses**.
-2. About a minute before the quiz, open `/admin` and log in. The free server sleeps when no one is using it, so the first load can take about a minute. That is normal. Once students start, their heartbeats keep it awake.
+2. About a minute before the quiz, open https://tapat-xrg5.onrender.com/admin and log in. The free server sleeps when no one is using it, so the first load can take about a minute. That is normal. Once students start, their heartbeats keep it awake.
 3. Under New quiz, type a title, paste the Google Form link and click **Create quiz**.
 4. Click **Copy start link** and send the link to the class.
 5. During the quiz, watch the Students table. Click a row to see that student's timeline.
@@ -108,7 +108,7 @@ Status chips: **OK** (gray), **Offline gap, synced later** (gray-amber), **Monit
 | ![Consent](docs/screenshots/03_consent.png) | ![Blocked](docs/screenshots/05_blocked.png) |
 | Consent screen | Block page for chatgpt.com |
 
-The full set is in [`docs/screenshots`](docs/screenshots), and the documentation PDF is [`docs/Tapat_INTE301_Project1_Lazaro.pdf`](docs/Tapat_INTE301_Project1_Lazaro.pdf).
+The full set is in [`docs/screenshots`](docs/screenshots), and the user manual PDF (professor guide, student guide, statuses, troubleshooting, deployment and source code) is [`docs/Tapat_INTE301_Project1_Lazaro.pdf`](docs/Tapat_INTE301_Project1_Lazaro.pdf). Its text is in [`docs/manual.md`](docs/manual.md).
 
 ## Limitations
 

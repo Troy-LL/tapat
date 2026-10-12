@@ -12,7 +12,7 @@
   ],
   "host_permissions": [
     "https://docs.google.com/*",
-    "https://tapat.onrender.com/*"
+    "https://tapat-xrg5.onrender.com/*"
   ],
   "background": {
     "service_worker": "background.js"

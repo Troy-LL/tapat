@@ -58,7 +58,7 @@ def main(argv=None):
     p.add_argument("--email", required=True)
     p.add_argument("--session", required=True, help="session id from the exam page")
     p.add_argument("--token", required=True, help="session token from the exam page")
-    p.add_argument("--server", default="https://tapat.onrender.com")
+    p.add_argument("--server", default="https://tapat-xrg5.onrender.com")
     p.add_argument("--apps", default=",".join(DEFAULT_APPS), help="comma-separated app names to watch")
     a = p.parse_args(argv)
     watched = [x.strip() for x in a.apps.split(",") if x.strip()]
