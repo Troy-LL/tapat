@@ -1,76 +1,66 @@
 # What Tapat does
 
-Tapat is an exam monitor for Google Forms quizzes. *Tapat* is Filipino for "honest." The student takes the quiz inside the Tapat Chrome extension, which blocks a listed set of sites and notes when the student leaves the quiz. The professor sees one row per student on a password-protected admin page. Tapat gives the professor a record; the professor decides.
+Tapat is a Chrome extension and a small web server for Google Forms quizzes. The student opens the quiz through the extension. While the quiz is open, the extension blocks a list of sites and records when the student leaves the quiz tab. The professor sees one row per student on a password-protected admin page.
 
-Repo: **https://github.com/Troy-LL/tapat** · Live admin: **https://tapat-xrg5.onrender.com/admin**
+Tapat does not decide who cheated. It gives the professor a record to check.
+
+The code is at https://github.com/Troy-LL/tapat and the live admin page is at https://tapat-xrg5.onrender.com/admin.
 
 # Features
 
-| Feature | What it does |
+| Feature | Description |
 |---|---|
-| Block list | Blocks ChatGPT, Gemini, Claude, Word Online / office.com, Google Docs documents and `.pdf` links during the quiz. Google Forms is never blocked. Attempts are logged. |
-| Focus tracking | Logs tab switches, new tabs and Chrome losing focus. |
-| Submit detection | Closes the session when the Form records the response. |
-| Heartbeat | Checks in every 10 seconds so a stopped monitor shows up. |
-| Offline queue | Keeps events in the browser while offline and sends them in order later, never twice. |
-| Waking state | Shows "Server waking up…" while the free server starts. |
-| No session | Flags students in the Form responses CSV who never ran Tapat. |
-| Delete logs / quiz | Removes a quiz's logs, or the whole quiz, after grading. |
-| Desktop watcher | Optional; logs when Word, Notes, Preview or Acrobat comes to the front (app names only). |
+| Site blocking | Blocks ChatGPT, Gemini, Claude, Word Online, Google Docs and PDF links during the quiz. Google Forms is not blocked. |
+| Focus tracking | Records tab switches, new tabs and when Chrome loses focus. |
+| Submit detection | Ends the session when the Form says the response was recorded. |
+| Heartbeat | The extension checks in every 10 seconds. |
+| Offline queue | If the wifi drops, events are saved in the browser and sent later in order. |
+| No session check | After the quiz, the professor uploads the Form responses CSV. Students who answered without Tapat are flagged. |
+| Deleting data | The professor can delete a quiz's logs, or the whole quiz, after grading. |
+| Desktop watcher | Optional. Records when Word, Notes, Preview or Acrobat is opened. It saves app names only. |
 
 # How it works
 
-```
- Student's computer                                  Tapat server (Render)
-+------------------------------+  start link + email  +----------------------+
-| Chrome + Tapat extension     | -------------------> | events, quizzes      |
-| consent, Google Form         |  events              | database (Neon)      |
-| block list, focus, offline   | -------------------> |                      |
-+------------------------------+                      | /admin for professor |
- Desktop watcher (optional) ------ app events ------> +----------------------+
-```
+@@DIAGRAM@@
 
-Each quiz has a start link with a secret part. Starting gives the student a session token tied to their email and the quiz, and every event must carry it, so no one can send events in a classmate's name. Events are saved in the browser first and retried until the server has them.
+The professor creates a quiz and gets a start link. Each student pastes the link into the extension with their school email. The server then gives that student a session token, and every event has to include it. A student cannot send events under a classmate's name.
+
+The server sleeps when nobody uses it, so the first visit can take about a minute.
 
 # Professor steps
 
-1. In the Google Form, turn on **Collect email addresses** (Settings → Responses).
-2. About a minute before the quiz, open https://tapat-xrg5.onrender.com/admin and **Log in**. The first load can take a minute while the free server wakes.
-3. Type a title, paste the Form link, and click **Create quiz**.
-4. Click **Copy start link** and send it to the class.
+1. In the Google Form, go to Settings, then Responses, and turn on Collect email addresses.
+2. About a minute before the quiz, open the admin page and log in.
+3. Enter a quiz title and the Form link, then click Create quiz.
+4. Click Copy start link and send the link to the class.
 5. During the quiz, click a student's row to see their timeline.
-6. After the quiz, download the Form responses as CSV and click **Import responses**. Students who skipped Tapat show **No session**.
-7. After grading, type `DELETE` and click **Delete logs**, or **Delete quiz** to remove the quiz entirely.
+6. After the quiz, download the Form responses as CSV and click Import responses.
+7. After grading, type DELETE and click Delete logs. Use Delete quiz to remove the quiz as well.
 
 @@FIG:09_admin_quiz.png@@
 
 # Student steps
 
-1. Install once: open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and pick the `extension` folder.
-2. Click the Tapat icon, paste the start link, enter your school email (the same one as in the Form), and click **Open exam**. If it says "Server waking up…", wait.
-3. Read the consent screen ("This logs tab switches and apps opened, nothing else.") and click **I understand, start the quiz**.
-4. Answer and submit the Form. Blocked sites show the block page; click **Back to the exam**. If the wifi drops, keep going; events send when you are back online.
+1. Open `chrome://extensions`, turn on Developer mode, click Load unpacked and choose the `extension` folder. This only has to be done once.
+2. Click the Tapat icon. Paste the start link, enter the same email you use in the Form, and click Open exam. If the popup says the server is waking up, wait.
+3. Read the consent screen and click "I understand, start the quiz".
+4. Answer and submit the Form. If you open a blocked site, Tapat shows a block page and records it. If your wifi drops, keep answering.
 
-@@FIG:02_popup.png@@
-
-@@FIG:05_blocked.png@@
+@@PAIR:02_popup.png:05_blocked_card.png@@
 
 # Status meanings
 
-| Status | Color | Meaning |
-|---|---|---|
-| OK | Gray | Monitored the whole time. |
-| Offline gap, synced later | Gray-amber | Connection dropped; the events arrived later, nothing missing. |
-| Monitor silent | Amber | No heartbeat for over 25 seconds and nothing filled the gap. |
-| No session | Red | In the Form responses but never ran Tapat. |
+| Status | Meaning |
+|---|---|
+| @@CHIP:ok:OK@@ | Tapat ran the whole time. |
+| @@CHIP:offline:Offline gap, synced later@@ | The connection dropped, but the missing events arrived later. |
+| @@CHIP:silent:Monitor silent@@ | No heartbeat for more than 25 seconds, and nothing came in later. |
+| @@CHIP:none:No session@@ | The student is in the Form responses but never started Tapat. |
 
-Notes show **Blocked site**, **App opened** and **Left exam** (three or more tab switches or focus losses).
+The Notes column shows when a student opened a blocked site, opened a watched app, or left the quiz three or more times.
 
 # Limitations and privacy
 
-- It blocks a list, not every site, and can't see a second device.
-- Session tokens stop events being faked for a classmate, but don't prove the student typed their own email. The responses CSV catches that mismatch afterward.
-- Offline events are lost if the student clears browser data before reconnecting; that gap shows as Monitor silent.
-- Students who decline take the quiz on paper or in a proctored room. A flag is a reason to ask, not proof.
+Tapat only blocks the sites on its list. It cannot see a phone or a second computer. The session token stops one student from posting events for another, but it does not prove the student typed their own email. The responses CSV shows that kind of mismatch after the quiz. Events saved offline are lost if the student clears their browser data before reconnecting. Students who do not agree to the consent screen take the quiz on paper or in a proctored room. A flag is a reason to ask the student, not proof.
 
-Events are stored on a hosted server (Render) with a database on Neon, and only the teacher can see them through a password-protected admin page. Tapat stores emails and event types only, never page contents, keystrokes or window titles.
+Events are stored on a hosted server (Render) with a database on Neon, and only the teacher can see them through a password-protected admin page. Tapat stores emails and event types. It does not store page contents, keystrokes or window titles.
