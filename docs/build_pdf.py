@@ -1,4 +1,4 @@
-"""Build docs/Tapat_INTE301_Project1_Lazaro.pdf from the README, screenshots and code.
+"""Build docs/Tapat_INTE301_Project1_Lazaro.pdf, the short user manual, from docs/manual.md and screenshots.
 
 Usage: python docs/build_pdf.py   (needs markdown, pygments, playwright, pypdf)
 """
@@ -21,14 +21,14 @@ OUT = ROOT / "docs" / "Tapat_INTE301_Project1_Lazaro.pdf"
 SHOTS = ROOT / "docs" / "screenshots"
 ACCENT = "#1F3A8A"
 FIGURES = [
-    ("09_admin_quiz.png", "Admin quiz page on the live server: start link after Copy start link, a student with a blocked site and their timeline open, and a No session row after Import responses."),
+    ("09_admin_quiz.png", "Admin quiz page: start link, one row per student with status and timeline, Import responses, Delete logs and Delete quiz."),
     ("08_admin_login.png", "Professor log in. The password is set only in the server's environment."),
     ("10_admin_home.png", "Admin home: create a quiz from a Google Form link, and the list of quizzes."),
-    ("02_popup.png", "Extension popup: the student pastes the start link and enters their school email."),
+    ("02_popup.png", "Extension popup: paste the start link and enter your school email."),
     ("02b_popup_waking.png", "Popup while the free server wakes up. It waits and opens the exam once the server answers."),
     ("03_consent.png", "Consent screen shown before the quiz starts."),
     ("04_exam.png", "Exam page with a sample quiz embedded in place of a real Google Form."),
-    ("05_blocked.png", "Block page shown when chatgpt.com is opened during the quiz; the attempt is logged."),
+    ("05_blocked.png", "Block page when a listed site is opened during the quiz; the attempt is logged."),
     ("02c_popup_offline.png", "Popup while the server can't be reached: events are kept in the browser and sent in order later."),
     ("06_submitted.png", "Sample quiz submitted: Tapat detects the formResponse page and closes the session."),
 ]
@@ -66,7 +66,8 @@ th {{ background: #eef2fb; color: {ACCENT}; }}
 .toc ol {{ font-size: 12pt; line-height: 2; }}
 .readme {{ counter-reset: h2; }}
 .readme h1 {{ display: none; }}
-.readme h2.sec {{ break-before: page; }}
+.readme h2.sec {{ break-before: auto; margin-top: 14px; }}
+.readme {{ break-before: page; }}
 .cover .kind {{ font-size: 13pt; letter-spacing: .2em; text-transform: uppercase; color: {ACCENT}; margin: 4px 0 0; }}
 .cover .url {{ color: {ACCENT}; font-weight: 600; }}
 .toc .apx {{ font-size: 12pt; line-height: 2; margin: 6px 0 0 0; }}
@@ -75,7 +76,7 @@ th {{ background: #eef2fb; color: {ACCENT}; }}
 .readme h2 {{ counter-increment: h2; border-bottom: 2px solid {ACCENT}; padding-bottom: 2px; }}
 .readme h2::before {{ content: counter(h2) ". "; }}
 figure {{ break-inside: avoid; margin: 0 0 14px; text-align: center; }}
-figure img {{ max-width: 100%; max-height: 105mm; border: 1px solid #ccd; }}
+figure img {{ max-width: 100%; max-height: 95mm; border: 1px solid #ccd; }}
 figcaption {{ font-size: 9.5pt; color: #333; margin-top: 4px; }}
 .label {{ background: {ACCENT}; color: #fff; font-family: 'DejaVu Sans Mono',monospace; font-size: 8.5pt; padding: 5px 8px; border-radius: 4px 4px 0 0; }}
 .listing table {{ border: 0; margin: 0; }}
@@ -116,7 +117,7 @@ def manual_html():
     deploy = re.sub(r"^# .*\n", "", deploy).replace("\n## ", "\n### ")
     appendix = ('<div class="page appendix"><h2>Appendix A. Deployment</h2>'
                 + markdown.markdown(deploy, extensions=["tables", "fenced_code"]) + "</div>")
-    return body, sections, appendix
+    return body, sections, ""
 
 
 def listing(path):
@@ -135,14 +136,6 @@ def listing(path):
 def build():
     body, sections, appendix = manual_html()
     today = datetime.date.today().strftime("%B %d, %Y").replace(" 0", " ")
-    toc = "".join(f"<li>{s}</li>" for s in sections)
-    toc += ('</ol><p class="apx">Appendix A. Deployment<br>Appendix B. Source code</p><ol class=src>'
-            + "".join(f"<li>B{i + 1}. {t}</li>" for i, (t, _) in enumerate(PARTS)))
-    parts = "".join(
-        f'<div class="page part"><h2>Appendix B{i + 1}. Source code: {t}</h2><p>{len(files)} files.</p></div>'
-        + "".join(listing(f) for f in files)
-        for i, (t, files) in enumerate(PARTS)
-    )
     doc = f"""<!doctype html><html><head><meta charset="utf-8"><title>Tapat</title>
 <meta name="author" content="Troy Lazaro"><style>{CSS}</style></head><body>
 <section class="cover"><img class="logo" src="{img('logo.png', ROOT / 'logo')}" alt="Tapat">
@@ -150,12 +143,10 @@ def build():
 <p class="one">An exam monitor for Google Forms quizzes that blocks a listed set of sites and logs when students leave the exam.</p>
 <div class="meta"><b>INTE301 Systems Integration &amp; Architecture · Project 1</b><br>
 Sir Rodel Villareaz<br>Troy Lazaro<br>{today}<br>
-<span class="url">https://tapat-xrg5.onrender.com</span></div>
+<span class="url">github.com/Troy-LL/tapat · tapat-xrg5.onrender.com/admin</span></div>
 <img src="{img('09_admin_quiz.png')}"></section>
-<section class="page toc"><h1>Contents</h1><ol>{toc}</ol></section>
 <section class="readme">{body}</section>
 {appendix}
-{parts}
 </body></html>"""
     (ROOT / "docs" / "build").mkdir(exist_ok=True)
     tmp = ROOT / "docs" / "build" / "tapat.html"

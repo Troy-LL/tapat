@@ -109,7 +109,7 @@ Status chips: **OK** (gray), **Offline gap, synced later** (gray-amber), **Monit
 | ![Consent](docs/screenshots/03_consent.png) | ![Blocked](docs/screenshots/05_blocked.png) |
 | Consent screen | Block page for chatgpt.com |
 
-The full set is in [`docs/screenshots`](docs/screenshots), and the user manual PDF (professor guide, student guide, statuses, troubleshooting, deployment and source code) is [`docs/Tapat_INTE301_Project1_Lazaro.pdf`](docs/Tapat_INTE301_Project1_Lazaro.pdf). Its text is in [`docs/manual.md`](docs/manual.md).
+The full set is in [`docs/screenshots`](docs/screenshots), and the short user manual PDF (features, how it works, professor and student steps, statuses, limitations and privacy) is [`docs/Tapat_INTE301_Project1_Lazaro.pdf`](docs/Tapat_INTE301_Project1_Lazaro.pdf). Its text is in [`docs/manual.md`](docs/manual.md).
 
 ## Limitations
 
