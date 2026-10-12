@@ -56,8 +56,9 @@ def session_state(server, session_id) -> str:
 def main(argv=None):
     p = argparse.ArgumentParser(description="Tapat desktop watcher")
     p.add_argument("--email", required=True)
-    p.add_argument("--session", required=True, help="session id shown on the exam page")
-    p.add_argument("--server", default="http://localhost:8000")
+    p.add_argument("--session", required=True, help="session id from the exam page")
+    p.add_argument("--token", required=True, help="session token from the exam page")
+    p.add_argument("--server", default="https://tapat.onrender.com")
     p.add_argument("--apps", default=",".join(DEFAULT_APPS), help="comma-separated app names to watch")
     a = p.parse_args(argv)
     watched = [x.strip() for x in a.apps.split(",") if x.strip()]
@@ -69,7 +70,7 @@ def main(argv=None):
         hit = matches(app, watched) if app else None
         if hit and hit != last:
             try:
-                post(a.server, {"session_id": a.session, "student": a.email, "type": "app_opened",
+                post(a.server, {"session_id": a.session, "session_token": a.token, "student": a.email, "type": "app_opened",
                                 "detail": hit, "ts": time.time()})
             except OSError:
                 pass

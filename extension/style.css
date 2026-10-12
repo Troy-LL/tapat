@@ -12,3 +12,7 @@ button{background:#1F3A8A;color:#fff;border:0;border-radius:6px;padding:10px 16p
 iframe{width:100%;height:calc(100vh - 46px);border:0;display:block}
 .blocked{background:#fff1f1}.blocked h1{color:#9b1c1c!important}
 .mono{font-family:Consolas,monospace;background:#f3f3f3;padding:6px 10px;border-radius:4px}
+.state{background:#fff7e0;border-left:3px solid #e0a400;padding:6px 10px;font-size:13px}
+.adv{margin-top:12px;font-size:13px}.adv summary{cursor:pointer;color:#555}
+button.secondary{background:#e3e8f5;color:#1F3A8A;padding:6px 12px;font-size:13px}
+button:disabled{opacity:.5}

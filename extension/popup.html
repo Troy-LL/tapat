@@ -2,9 +2,17 @@
 <body class="popup">
   <h1><img src="icons/icon-32.png" alt="" style="height:24px;vertical-align:-4px;margin-right:6px">Tapat</h1>
   <p class="muted">Start your quiz here.</p>
+  <label>Start link<input id="link" type="url" placeholder="Paste the link from your professor"></label>
   <label>School email<input id="email" type="email" placeholder="you@school.edu"></label>
-  <label>Google Form link<input id="form" type="url" placeholder="https://docs.google.com/forms/d/e/.../viewform"></label>
   <button id="go">Open exam</button>
+  <p id="queue" class="state" hidden></p>
+  <p id="state" class="state" hidden></p>
   <p id="err" class="err"></p>
+  <details class="adv"><summary>Server</summary>
+    <label>Server address<input id="server" type="url"></label>
+    <button id="save" class="secondary">Save</button>
+    <p class="muted">Used when the start link is only a code. A full start link carries its own server.</p>
+  </details>
+  <script src="config.js"></script>
   <script src="popup.js"></script>
 </body></html>

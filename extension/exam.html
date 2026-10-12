@@ -1,11 +1,13 @@
 <!doctype html><html><head><meta charset="utf-8"><title>Tapat exam</title><link rel="stylesheet" href="style.css"></head>
 <body>
-  <header class="top"><b><img src="icons/icon-32.png" alt="" style="height:18px;vertical-align:-4px;margin-right:6px">Tapat</b><span id="who"></span></header>
+  <header class="top"><b><img src="icons/icon-32.png" alt="" style="height:18px;vertical-align:-4px;margin-right:6px">Tapat</b><span><span id="who"></span> <button id="watch" class="secondary" hidden>Copy watcher command</button></span></header>
   <section id="consent" class="card">
     <h2>Before you start</h2>
     <p class="big">This logs tab switches and apps opened, nothing else.</p>
-    <p>While the quiz is open, a listed set of sites is blocked. Your teacher sees a timeline of when you left the exam. Logs are deleted after grading.</p>
+    <p>While the quiz is open, a listed set of sites is blocked. Your professor sees a timeline of when you left the exam. Logs are deleted after grading.</p>
     <button id="agree">I understand, start the quiz</button>
+    <p id="state" class="state" hidden></p>
+    <p id="err" class="err"></p>
   </section>
   <iframe id="form" hidden></iframe>
   <script src="exam.js"></script>

@@ -21,26 +21,30 @@ OUT = ROOT / "docs" / "Tapat_INTE301_Project1_Lazaro.pdf"
 SHOTS = ROOT / "docs" / "screenshots"
 ACCENT = "#1F3A8A"
 FIGURES = [
-    ("01_dashboard.png", "Teacher dashboard with seed data: a clean student, a flagged student with an open timeline, and a No session row."),
-    ("02_popup.png", "Extension popup where the student enters their email and the Form link."),
+    ("09_admin_quiz.png", "Admin quiz page: start link (after Copy start link), one row per student with status chips, two timelines open, and Delete logs armed by typing DELETE. Seed data."),
+    ("08_admin_login.png", "Professor log in. The password is set only in the server's environment."),
+    ("10_admin_home.png", "Admin home: create a quiz from a Google Form link, and the list of quizzes."),
+    ("02_popup.png", "Extension popup: the student pastes the start link and enters their school email."),
+    ("02b_popup_waking.png", "Popup while the free server wakes up. It waits and opens the exam once the server answers."),
     ("03_consent.png", "Consent screen shown before the quiz starts."),
     ("04_exam.png", "Exam page with a sample quiz embedded in place of a real Google Form."),
     ("05_blocked.png", "Block page shown when chatgpt.com is opened during the quiz; the attempt is logged."),
+    ("02c_popup_offline.png", "Popup while the server can't be reached: events are kept in the browser and sent in order later."),
     ("06_submitted.png", "Sample quiz submitted: Tapat detects the formResponse page and closes the session."),
-    ("07_no_session.png", "Submitted in incognito without Tapat, flagged after CSV import."),
 ]
 PARTS = [
-    ("Teacher server", ["server/app.py", "server/seed.py", "server/run.sh", "server/requirements.txt",
-                        "server/sample_responses.csv", "server/tests/test_app.py"]),
+    ("Tapat server", ["server/app.py", "server/db.py", "server/auth.py", "server/seed.py", "server/run.sh",
+                      "server/requirements.txt", "server/sample_responses.csv", "server/tests/test_app.py",
+                      "render.yaml"]),
     ("Chrome extension", ["extension/manifest.json", "extension/config.js", "extension/background.js",
                           "extension/popup.html", "extension/popup.js", "extension/exam.html",
                           "extension/exam.js", "extension/blocked.html", "extension/blocked.js",
-                          "extension/style.css"]),
+                          "extension/style.css", "extension/tests/blocklist.test.js"]),
     ("Desktop watcher", ["watcher/watcher.py", "watcher/requirements.txt", "watcher/README.md"]),
     ("Documentation build", ["docs/build_pdf.py"]),
 ]
 LANG = {".py": "Python", ".js": "JavaScript", ".json": "JSON", ".html": "HTML", ".css": "CSS",
-        ".sh": "Bash", ".txt": "Text", ".csv": "CSV", ".md": "Markdown"}
+        ".sh": "Bash", ".txt": "Text", ".csv": "CSV", ".md": "Markdown", ".yaml": "YAML"}
 
 CSS = f"""
 @page {{ size: A4; margin: 20mm 20mm 22mm 20mm; }}
@@ -58,7 +62,7 @@ th {{ background: #eef2fb; color: {ACCENT}; }}
 .cover .one {{ font-size: 14pt; color: #333; margin: 6px 0 22px; }}
 .cover .meta {{ font-size: 11pt; line-height: 1.8; }}
 .cover img.logo {{ width: 95mm; border: 0; margin: 0 0 6px; }}
-.cover img:not(.logo) {{ width: 100%; border: 1px solid #ccd; margin-top: 18px; }}
+.cover img:not(.logo) {{ max-width: 100%; max-height: 125mm; border: 1px solid #ccd; margin-top: 18px; }}
 .toc ol {{ font-size: 12pt; line-height: 2; }}
 .readme {{ counter-reset: h2; }}
 .readme h1 {{ display: none; }}
@@ -87,6 +91,7 @@ def img(name, folder=SHOTS):
 
 def readme_html():
     md = (ROOT / "README.md").read_text()
+    md = re.sub(r'^<p align="center">.*?</p>\n', "", md, flags=re.S)  # logo is on the cover
     md = re.sub(r"## Screenshots\n.*?(?=\n## )", "## Screenshots\n\n@@FIGURES@@\n", md, flags=re.S)
     body = markdown.markdown(md, extensions=["tables", "fenced_code"])
     figs = "".join(
@@ -94,6 +99,9 @@ def readme_html():
         for i, (f, c) in enumerate(FIGURES, 1)
     )
     body = body.replace("<p>@@FIGURES@@</p>", figs)
+    deploy = (ROOT / "docs" / "deploy.md").read_text()
+    deploy = re.sub(r"^# .*\n", "", deploy).replace("\n## ", "\n### ")
+    body += "<h2>Deployment guide</h2>" + markdown.markdown(deploy, extensions=["tables", "fenced_code"])
     sections = re.findall(r"<h2>(.*?)</h2>", body)
     return body, sections
 
@@ -127,7 +135,7 @@ def build():
 <p class="one">An exam monitor for Google Forms quizzes that blocks a listed set of sites and logs when students leave the exam.</p>
 <div class="meta"><b>INTE301 Systems Integration &amp; Architecture · Project 1</b><br>
 Sir Rodel Villareaz<br>Troy Lazaro<br>{today}</div>
-<img src="{img('01_dashboard.png')}"></section>
+<img src="{img('09_admin_quiz.png')}"></section>
 <section class="page toc"><h1>Contents</h1><ol>{toc}</ol></section>
 <section class="page readme">{body}</section>
 {parts}
